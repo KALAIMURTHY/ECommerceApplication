@@ -1,4 +1,4 @@
-package com.ecommerce.ecommerceapplicatiom.model;
+package com.ecommerce.ecommerceapplicatiom.entity;
 
 import org.hibernate.annotations.GenericGenerator;
 

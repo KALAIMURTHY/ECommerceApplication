@@ -7,7 +7,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
-import com.ecommerce.ecommerceapplicatiom.model.Product;
+import com.ecommerce.ecommerceapplicatiom.entity.Product;
 import com.ecommerce.ecommerceapplicatiom.repository.ProductRepository;
 
 @Controller

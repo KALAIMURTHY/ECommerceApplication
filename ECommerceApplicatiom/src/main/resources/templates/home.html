@@ -6,16 +6,46 @@
 <link
 	href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
 	rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<style>
+.badge {
+  padding-left: 9px;
+  padding-right: 9px;
+  -webkit-border-radius: 9px;
+  -moz-border-radius: 9px;
+  border-radius: 9px;
+}
+
+.label-warning[href],
+.badge-warning[href] {
+  background-color: #c67605;
+}
+#lblCartCount {
+    font-size: 12px;
+    background: #ff0000;
+    color: #fff;
+    padding: 0 5px;
+    vertical-align: top;
+    margin-left: -10px; 
+}
+</style>
 </head>
 <body style="background-color: #eee;">
-
+<div class="container">
 <div align="center">
-		<h1>Welcome home</h1>
-		<div th:each="product: ${products}">
+		<h1>Laptop store</h1>
+		
+		
+		<!-- <div th:each="product: ${products}">
 			<img alt="peanut" th:src="@{'/image?id='+ ${product.productId}}">
-		</div>
-	</div>
-
+		</div> -->
+</div>
+<div align="right">
+	<a>
+		<i class="fa" style="font-size:54px">&#xf07a;</i>
+		<span class='badge badge-warning' id='lblCartCount'> 0 </span>
+	</a>
+</div>
 	<section style="background-color: #eee;">
 		<div class="container py-5">
 			<div class="row">
@@ -29,24 +59,25 @@
 								<p class="text-white mb-0 small">x4</p>
 							</div>
 						</div>
+						<!-- th:src="@{'/image?id='+ ${product.productId}}" -->
 						<!-- src="https://mdbcdn.b-cdn.net/img/Photos/Horizontal/E-commerce/Products/4.webp" -->
 						<img
-							
 							th:src="@{'/image?id='+ ${product.productId}}"
+							
 							class="card-img-top" alt="Laptop" />
 						<div class="card-body">
 							<div class="d-flex justify-content-between">
 								<p class="small">
-									<a href="#!" class="text-muted">Laptops</a>
+									<a href="#" class="text-muted">Laptops</a>
 								</p>
 								<p class="small text-danger">
-									<s>$1099</s>
+									<s>$199999</s>
 								</p>
 							</div>
 
 							<div class="d-flex justify-content-between mb-3">
 								<h5 class="mb-0" th:text="${product.productName}"></h5>
-								<h5>$</h5><h5 class="text-dark mb-0" th:text="${product.productPrice}"></h5>
+								<h5 class="text-dark mb-0" th:text="'Rs. '+${product.productPrice}"></h5>
 							</div>
 
 							<div class="d-flex justify-content-between mb-2">
@@ -58,6 +89,11 @@
 										class="fa fa-star"></i> <i class="fa fa-star"></i> <i
 										class="fa fa-star"></i>
 								</div>
+							</div>
+
+							<div class="d-flex justify-content-center mb-2">
+								<!-- <a th:href="@{/addtocart/{id}(id=${product.productId})}" id="${product.productId}" class="btn btn-primary">Add to cart</a> -->
+								<button th:id="${product.productId}" class="btn btn-primary addtocart">Add to cart</button>
 							</div>
 						</div>
 					</div>
@@ -156,5 +192,49 @@
 			<img alt="peanut" th:src="*{product.productImg}">
 		</div>
 	</div> -->
+	
+</div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+<script>
+$(document).ready(function(){
+	
+	alert("welcome to jquery ..");
+	
+	
+	$(".addtocart").click(function() {
+		
+		var id = $(this).attr('id');
+		var actiontext = $(this).text();
+		
+		if(actiontext.indexOf("Add") != -1){
+			$.ajax({
+				type : 'GET',
+				url : "/addtocart/"+id,
+				success : function(resultData) {
+					var cartcount = $("#lblCartCount").text(resultData.split("_")[1]);
+					$("#"+id).text("Remove from cart");
+					alert("Save Complete "+resultData)
+					
+				}
+			});
+		}
+		else if(actiontext.indexOf("Remove") != -1){
+			$.ajax({
+				type : 'GET',
+				url : "/removefromcart/"+id,
+				success : function(resultData) {
+					var cartcount = $("#lblCartCount").text(resultData.split("_")[1]);
+					alert("Save Complete "+resultData)
+					$("#"+id).text("Add from cart");
+				}
+			});
+		}
+			
+	
+	
+		});
+	});
+</script>
 </body>
 </html>

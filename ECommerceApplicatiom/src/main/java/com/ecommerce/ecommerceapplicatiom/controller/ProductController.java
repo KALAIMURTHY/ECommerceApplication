@@ -8,16 +8,22 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.ecommerce.ecommerceapplicatiom.model.Product;
+import com.ecommerce.ecommerceapplicatiom.entity.Product;
+import com.ecommerce.ecommerceapplicatiom.model.Cart;
+import com.ecommerce.ecommerceapplicatiom.model.CartItem;
+import com.ecommerce.ecommerceapplicatiom.model.CartManager;
 import com.ecommerce.ecommerceapplicatiom.repository.ProductRepository;
 import com.ecommerce.ecommerceapplicatiom.repository.ProductService;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 @Controller
 public class ProductController {
@@ -27,6 +33,9 @@ public class ProductController {
 	
 	@Autowired
 	ProductRepository productRepository;
+	
+	@Autowired
+    private CartManager cartManager;
 	
 	@GetMapping("/newproduct")
 	public String newproduct(Model model) {
@@ -50,6 +59,26 @@ public class ProductController {
 		response.setContentType("image/jpeg, image/jpg, image/png, image/gif, image/pdf");
 		response.getOutputStream().write(product.get().getProductImg());
 		response.getOutputStream().close();
+	}
+	
+	@GetMapping("/addtocart/{id}")
+	@ResponseBody
+	public String addtocart(@PathVariable String id, Optional<Product> product, HttpSession session) {
+		product = productRepository.findProductByProductId(id);
+		Cart cart = cartManager.getCart(session);
+        cart.addItem(product.get());
+		
+		return "success_"+cart.getItemCount();
+	}
+	
+	@GetMapping("/removefromcart/{id}")
+	@ResponseBody
+	public String removefromcart(@PathVariable String id, Optional<Product> product, HttpSession session) {
+		product = productRepository.findProductByProductId(id);
+		Cart cart = cartManager.getCart(session);
+        cart.removeItem(product.get());
+		
+		return "success_"+cart.getItemCount();
 	}
 	
 }
