@@ -1,6 +1,8 @@
 package com.ecommerce.ecommerceapplicatiom.controller;
 
 import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -81,4 +83,17 @@ public class ProductController {
 		return "success_"+cart.getItemCount();
 	}
 	
+	@GetMapping("/shoppingcart")
+	public String shoppingcart(Model model, HttpSession session) {
+		
+		Cart cart = cartManager.getCart(session);
+		List<CartItem> items = cart.getItems();
+		float total = 0.0f;
+		for(CartItem item : items) {
+			total = total + item.getSubtotal();
+		}
+		model.addAttribute("total", total);
+		model.addAttribute("items", items);
+		return "shoppingcart";
+	}
 }
