@@ -2,12 +2,14 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
 <meta charset="ISO-8859-1">
-<title>Home</title>
+<title>Shopping cart</title>
 <link
 	href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
 	rel="stylesheet">
 <link rel="stylesheet"
 	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+	
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.css" />
 </head>
 <body style="background-color: #eee;">
 
@@ -112,30 +114,32 @@
 
                 <h3 class="mb-5 pt-2 text-center fw-bold text-uppercase">Address</h3>
 
-                <form class="mb-5">
+                <form class="mb-5" id="customerInformation">
 
 					<div class="row">
                     <div class="col-md-6 mb-5">
                       <div class="form-outline">
-                        <input type="text" id="name" name="name" class="form-control form-control-lg" placeholder="John Doe"
+                        <input type="text" id="customerName" name="customerName" class="form-control form-control-lg" placeholder="John Doe"
                           required="required" />
-                        <label class="form-label" for="name">Name</label>
+                        <label class="form-label" for="customerName">Name</label>
                       </div>
                     </div>
                     <div class="col-md-6 mb-5">
                       <div class="form-outline">
-                        <input type="text" id="mobile" name="mobile" class="form-control form-control-lg"
+                        <input type="text" id="customerMobile" name="customerMobile" class="form-control form-control-lg"
                           placeholder="9876543210" required="required" />
-                        <label class="form-label" for="mobile">Mobile</label>
+                        <label class="form-label" for="customerMobile">Mobile</label>
                       </div>
                     </div>
                   </div>
 
                   <div class="form-outline mb-5">
-                    <input type="text" id="address" name="address" class="form-control form-control-lg"
+                    <input type="text" id="customerAddress" name="customerAddress" class="form-control form-control-lg"
                       placeholder="address"  required="required"/>
-                    <label class="form-label" for="address">Address</label>
+                    <label class="form-label" for="customerAddress">Address</label>
                   </div>
+
+				<input type="hidden" name="amount" id="orderTotal" th:value="${total}"/>
 
                  <!--  <div class="form-outline mb-5">
                     <input type="text" id="typeName" class="form-control form-control-lg"
@@ -167,6 +171,49 @@
   </div>
 </section>
 
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.js" ></script>
+<script>
 
+$(document).ready(function(){
+    $('#customerInformation').on('submit', function(e){
+        e.preventDefault();
+        var customerName = $("#customerName").val();
+        var customerMobile = $("#customerMobile").val();
+        var customerAddress = $("#customerAddress").val();
+        var amount = $("#orderTotal").val();
+        //var formData = new FormData(this);
+
+        
+       // alert(form)
+        //var url = form.attr('action');
+        $.ajax({
+            type: "POST",
+            url: "/placeOrder",
+            data: "customerName=" + customerName + "&customerMobile=" + customerMobile + "&customerAddress=" + customerAddress + "&amount=" + amount,
+            success: function(data) {
+                  
+                // Ajax call completed successfully
+                alert("Form Submited Successfully");
+                
+                swal({
+                    title: "Thanks",
+                    text: "We will deliver your order within 2 to 3 working days",
+                    type: "success"
+                }, function() {
+                    window.location = "/home";
+                });
+                
+            },
+            error: function(data) {
+                  
+                // Some error in ajax call
+                alert("some Error");
+            }
+        });
+    });
+});
+
+</script>
 </body>
 </html>

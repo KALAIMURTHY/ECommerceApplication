@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import com.ecommerce.ecommerceapplicatiom.entity.Product;
 import com.ecommerce.ecommerceapplicatiom.repository.ProductRepository;
 
+import jakarta.servlet.http.HttpSession;
+
 @Controller
 public class HomeController {
 	
@@ -18,6 +20,14 @@ public class HomeController {
 
 	@GetMapping("/")
 	public String home(Model model) {
+		List<Product> products = productRepository.findAll();
+		model.addAttribute("products",products);
+		return "home";
+	}
+	
+	@GetMapping("/home")
+	public String homeInvalidateSessions(Model model, HttpSession session) {
+		session.invalidate();
 		List<Product> products = productRepository.findAll();
 		model.addAttribute("products",products);
 		return "home";
