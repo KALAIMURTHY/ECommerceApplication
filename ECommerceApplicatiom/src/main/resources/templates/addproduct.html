@@ -20,8 +20,13 @@
             <div class="card-body p-5">
               <h2 class="text-uppercase text-center mb-5">Add new product</h2>
 				
-				<div class="alert alert-warning alert-dismissible fade show" role="alert" th:if="${message == 'success'}">
+				<div class="alert alert-success alert-dismissible fade show" role="alert" th:if="${message == 'success'}">
 				  New product has been added successfully. Check in <a href="/">home page</a>
+				  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+				</div>
+				
+				<div class="alert alert-warning alert-dismissible fade show" role="alert" th:if="${message == 'alreadyexist'}">
+				  The product you were trying to add is already exist.
 				  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 				</div>
 				
@@ -29,22 +34,22 @@
 			th:object="${product}" enctype="multipart/form-data">
 
                 <div class="form-outline mb-4">
-                  <input type="text" th:field="*{productName}" id="productName" class="form-control form-control-lg" />
+                  <input type="text" th:field="*{productName}" id="productName" class="form-control form-control-lg" required="required"/>
                   <label class="form-label" for="productName">Product name</label>
                 </div>
 
                 <div class="form-outline mb-4">
-                  <input type="text" th:field="*{productPrice}" id="productPrice" class="form-control form-control-lg" />
+                  <input type="text" th:field="*{productPrice}" id="productPrice" class="form-control form-control-lg" required="required"/>
                   <label class="form-label" for="productPrice">Product price</label>
                 </div>
 
                 <div class="form-outline mb-4">
-                  <input type="file" name="file" id="productImage" class="form-control form-control-lg" />
+                  <input type="file" name="file" id="productImage" class="form-control form-control-lg" required="required"/>
                   <label class="form-label" for="productImage">Product image</label>
                 </div>
 
                 <div class="form-outline mb-4">
-                  <input type="text" th:field="*{inStock}" id="inStock" class="form-control form-control-lg" />
+                  <input type="text" th:field="*{inStock}" id="inStock" class="form-control form-control-lg"/>
                   <label class="form-label" for="inStock">In stock</label>
                 </div>
 
