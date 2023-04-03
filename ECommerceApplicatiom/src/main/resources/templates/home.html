@@ -40,7 +40,7 @@
 			<img alt="peanut" th:src="@{'/image?id='+ ${product.productId}}">
 		</div> -->
 </div>
-<div align="right">
+<div align="right" id="shoppingCartCount">
 	<a id="lblCart" href="/shoppingcart">
 		<i class="fa" style="font-size:54px">&#xf07a;</i>
 		<span class='badge badge-warning' id='lblCartCount'> 0 </span>
@@ -199,7 +199,13 @@
 <script>
 $(document).ready(function(){
 	
-	alert("welcome to jquery ..");
+	$("#shoppingCartCount").click(function(){
+		var cartCount = $("#lblCartCount").text();
+		if(cartCount == 0)
+			$("#lblCart").attr("href", "#");
+		else
+			$("#lblCart").attr("href", "/shoppingcart");
+	});
 	
 	
 	$(".addtocart").click(function() {

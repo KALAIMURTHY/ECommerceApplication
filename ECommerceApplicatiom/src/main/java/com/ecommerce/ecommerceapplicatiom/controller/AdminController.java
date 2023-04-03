@@ -1,5 +1,6 @@
 package com.ecommerce.ecommerceapplicatiom.controller;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
@@ -69,10 +70,19 @@ public class AdminController {
 		return "addproduct";
 	}
 	
-	@PostMapping(value = "/updateproduct", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+	@PostMapping(value = "/updateproduct")
 	@ResponseBody
-	public String updateproduct(@ModelAttribute Product product) {
-		
-		return "result";
+	public String updateproduct(Product product, BindingResult bindingResult, @RequestParam("productImg") MultipartFile file, @RequestParam String productid) throws IOException {
+		Optional<Product> findProductByProductId = productRepository.findProductByProductId(productid);
+		Product product1 = findProductByProductId.get();
+		product1.setInStock(product.getInStock());
+		product1.setProductName(product.getProductName());
+		product1.setProductPrice(product.getProductPrice());
+		if(!file.isEmpty()) {
+			product1.setProductImg(file.getBytes());
+			product1.setProductImgName(file.getOriginalFilename());
+		}
+		productRepository.save(product1);
+		return "success";
 	}
 }

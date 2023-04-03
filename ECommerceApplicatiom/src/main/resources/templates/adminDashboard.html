@@ -6,12 +6,234 @@
 <link
 	href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
 	rel="stylesheet">
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+	
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.css" />
 </head>
 <body style="background-color: #eee;">
 <div class="container">
 
 <a href="/admin/orders" class="link-primary">Orders</a>
 
+<table class="table table-hover">
+	<thead>
+	    <tr>
+	      <th scope="col">productName</th>
+	      <th scope="col">productPrice</th>
+	      <th scope="col">productImg</th>
+	      <th scope="col">inStock</th>
+	      <th scope="col">Action</th>
+	    </tr>
+    </thead>
+    <tbody>
+    	<tr th:each="product: ${products}">
+    		<td th:text="${product.productName}"/>
+    		<td th:text="${product.productPrice}"/>
+    		<td>
+    			<img th:src="@{'/image?id='+ ${product.productId}}" class="rounded" alt="Laptop" height="60px" width="100px" />
+    		</td>
+    		<td th:text="${product.inStock}"/>
+    		<td>
+    			<button type="button" th:id="${product.productId}" class="btn btn-primary updateProduct">Edit</button>
+    			<button type="button" th:id="${product.productId}" class="btn btn-danger deleteProduct">Delete</button>
+    		</td>
+    	</tr>
+    </tbody>
+</table>
+
+<!-- Modal -->
+<div class="modal fade" id="productEditModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Update product</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form id="updateProductForm" method="post" enctype="multipart/form-data">
+
+                <div class="form-outline mb-4">
+                  <input type="hidden" id="productId" name="productId"/>
+                  <input type="text" id="productName" name="productName" class="form-control form-control-lg" required="required"/>
+                  <label class="form-label" for="productName">Product name</label>
+                </div>
+
+                <div class="form-outline mb-4">
+                  <input type="text" id="productPrice" name="productPrice" class="form-control form-control-lg" required="required"/>
+                  <label class="form-label" for="productPrice">Product price</label>
+                </div>
+
+                <div class="form-outline mb-4">
+                  <input type="file" name="productImg" id="productImage" class="form-control form-control-lg"/>
+                  <label class="form-label" for="productImage">Product image</label>
+                </div>
+
+                <div class="form-outline mb-4">
+                  <input type="text" id="inStock" name="inStock" class="form-control form-control-lg"/>
+                  <label class="form-label" for="inStock">In stock</label>
+                </div>
+
+           
+                <div class="d-flex justify-content-center">
+                  <button type="submit" id="updateProductFormButton"
+                    class="btn btn-primary btn-lg">Update product</button>
+                </div>
+
+              </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
 </div>
+
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.js" ></script>
+<script>
+
+$(document).ready(function(){
+	$(".updateProduct").click(function(){
+		var id = $(this).attr('id');
+		$.ajax({
+			type : 'GET',
+			url : "/product/"+id,
+			success : function(product) {
+				product = JSON.stringify(product);
+				product = JSON.parse(product);
+				$("#productId").val(product["productId"]);
+				$("#productName").val(product["productName"]);
+				$("#productPrice").val(product["productPrice"]);
+				$("#productImage").val(product["productImage"]);
+				$("#inStock").val(product["inStock"]);
+				$('#productEditModal').modal('show');
+				
+			}
+		});
+	});
+	
+	$(".deleteProduct").click(function(){
+		var id = $(this).attr('id');
+		swal({
+			  title: "Are you sure?",
+			  text: "Do you want to delete a product!",
+			  type: "warning",
+			  showCancelButton: true,
+			  confirmButtonClass: "btn-danger",
+			  confirmButtonText: "Yes, delete it!",
+			  cancelButtonText: "No, cancel pls!",
+			  closeOnConfirm: false,
+			  closeOnCancel: false
+			},
+			function(isConfirm) {
+			  if (isConfirm) {
+				  $.ajax({
+					type : 'GET',
+					url : "/deleteproduct/"+id,
+					success : function(result) {
+						swal({
+		                    title: "Deleted!",
+		                    text: "Product has been deleted.",
+		                    type: "success"
+		                }, function() {
+		                	window.location = "/admin/dashboard";
+		                });
+					}
+				  });
+			  } else {
+			    swal("Cancelled", "Product is not deleted :)", "error");
+			  }
+			});
+	});
+	
+	/*$("#updateProductFormButton").click(function(){
+		
+	
+		var form = $('#updateProductForm')[0];
+		var data = new FormData(form);alert(data);
+		$.ajax({
+			type: "POST",
+	        enctype: 'multipart/form-data',
+	        url: "/admin/updateproduct",
+            data: data,
+	        processData: false,  // Important!
+	        contentType: false,
+	        cache: false,
+            success: function(result) {
+                  
+                // Ajax call completed successfully
+                alert("Form Submited Successfully  "+result);
+            },
+            error: function(data) {
+                  
+                // Some error in ajax call
+                alert("some Error");
+            }
+        });
+		
+		
+		
+		var data = $("#updateProductForm").serialize();
+		
+		
+		var formData = $("#updateProductForm");
+		var url = formData.attr('action');
+		console.log("======================== "+formData.serialize());
+		alert($("#productName").val());
+		$.ajax({
+            type: "POST",
+            enctype: 'multipart/form-data',
+            url: url,
+            data: formData.serialize(),
+            success: function(result) {
+                  
+                // Ajax call completed successfully
+                alert("Form Submited Successfully  "+result);
+            },
+            error: function(data) {
+                  
+                // Some error in ajax call
+                alert("some Error");
+            }
+        });
+	});*/
+	
+	$("#updateProductForm").submit(function(e) {
+	    e.preventDefault();    
+	    var formData = new FormData(this);
+	    formData.append("productid",$("#productId").val());
+	    /* for (var pair of formData.entries()) {
+	        console.log(pair[0]+ ', ' + pair[1]); 
+	    } */
+
+	    $.ajax({
+	        url: "/admin/updateproduct",
+	        enctype: 'multipart/form-data',
+	        type: 'POST',
+	        data: formData,
+	        success: function (data) {
+	            swal({
+                    title: "Thanks",
+                    text: "Given product is updated successfully!",
+                    type: "success"
+                }, function() {
+                    window.location = "/admin/dashboard";
+                });
+	        },
+	        error: function (data) {
+	            alert("error "+data)
+	        },
+	        cache: false,
+	        contentType: false,
+	        processData: false
+	    });
+	});
+	
+});
+
+</script>
 </body>
 </html>

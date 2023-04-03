@@ -11,6 +11,7 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -33,6 +34,7 @@ import com.ecommerce.ecommerceapplicatiom.repository.ProductService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import jakarta.transaction.Transactional;
 
 @Controller
 public class ProductController {
@@ -131,5 +133,20 @@ public class ProductController {
 		System.out.println();
 		
 		return "";
+	}
+	
+	@GetMapping("/product/{id}")
+	@ResponseBody
+	public Product getProductById(@PathVariable String id, Optional<Product> product) {
+		product = productRepository.findProductByProductId(id);
+		return product.get();
+	}
+	
+	@GetMapping("/deleteproduct/{id}")
+	@Transactional
+	@ResponseBody
+	public String deleteProductById(@PathVariable String id) {
+		productRepository.deleteProductByProductId(id);
+		return "success";
 	}
 }
