@@ -6,6 +6,10 @@
 <link
 	href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
 	rel="stylesheet">
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+	
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.css" />
 </head>
 <body style="background-color: #eee;">
 <div class="container">
@@ -27,11 +31,64 @@
     	<td th:text="${order.customerAddress}"/>
     	<td th:text="${order.date}"/>
     	<td th:text="${order.amount}"/>
-    	<td><button th:id="${order.orderId}" class="btn btn-primary addtocart">Details</button></td>
+    	<td><button th:id="${order.orderId}" class="btn btn-primary orderDetails">Details</button></td>
     </tr>
   </tbody>
 </table>
 </div>
 
+<!-- Modal -->
+<div class="modal fade" id="orderDetailsTable" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="staticBackdropLabel">Order Details</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <table class="table table-hover">
+        	<thead>
+        		<tr>
+        			<th scope="col">Product Name</th>
+      				<th scope="col">Amount</th>
+        		</tr>
+        	</thead>
+        	<tbody id="orderDetailsRow"></tbody>
+        </table>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.js" ></script>
+<script>
+$(document).ready(function(){
+	$(".orderDetails").click(function(){
+		var id = $(this).attr('id');
+		$.ajax({
+			type : 'GET',
+			url : "/admin/orderdetails/"+id,
+			success : function(orderDetails) {
+				orderDetails = JSON.stringify(orderDetails);
+				orderDetails = JSON.parse(orderDetails);
+				var rows = "";
+				for (var orderDetail of orderDetails) {
+					rows += "<tr><td>"+orderDetail["productName"]+"</td><td>"+orderDetail["productAmount"]+"</td></tr>";
+			    }
+				$("#orderDetailsRow").html(rows);
+				$('#orderDetailsTable').modal('show');
+			}
+		});
+	});
+});
+</script>
 </body>
 </html>
