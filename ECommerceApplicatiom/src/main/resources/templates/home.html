@@ -32,20 +32,18 @@
 </head>
 <body style="background-color: #eee;">
 <div class="container">
-<div align="center">
-		<h1>Laptop store</h1>
-		
-		
-		<!-- <div th:each="product: ${products}">
-			<img alt="peanut" th:src="@{'/image?id='+ ${product.productId}}">
-		</div> -->
+<div>
+	<div align="center">
+		<h1>V-Mart</h1>
+	</div>
+	<div align="right" id="shoppingCartCount">
+		<a id="lblCart" href="/shoppingcart">
+			<i class="fa" style="font-size:54px">&#xf07a;</i>
+			<span class='badge badge-warning' id='lblCartCount'> 0 </span>
+		</a>
+	</div>
 </div>
-<div align="right" id="shoppingCartCount">
-	<a id="lblCart" href="/shoppingcart">
-		<i class="fa" style="font-size:54px">&#xf07a;</i>
-		<span class='badge badge-warning' id='lblCartCount'> 0 </span>
-	</a>
-</div>
+
 	<section style="background-color: #eee;">
 		<div class="container py-5">
 			<div class="row">
@@ -66,14 +64,7 @@
 							
 							class="card-img-top" alt="Laptop" />
 						<div class="card-body">
-							<div class="d-flex justify-content-between">
-								<p class="small">
-									<a href="#" class="text-muted">Laptops</a>
-								</p>
-								<p class="small text-danger">
-									<s>$199999</s>
-								</p>
-							</div>
+							
 
 							<div class="d-flex justify-content-between mb-3">
 								<h5 class="mb-0" th:text="${product.productName}"></h5>
@@ -220,7 +211,6 @@ $(document).ready(function(){
 				success : function(resultData) {
 					var cartcount = $("#lblCartCount").text(resultData.split("_")[1]);
 					$("#"+id).text("Remove from cart");
-					alert("Save Complete "+resultData)
 					
 				}
 			});
@@ -231,7 +221,6 @@ $(document).ready(function(){
 				url : "/removefromcart/"+id,
 				success : function(resultData) {
 					var cartcount = $("#lblCartCount").text(resultData.split("_")[1]);
-					alert("Save Complete "+resultData)
 					$("#"+id).text("Add from cart");
 				}
 			});

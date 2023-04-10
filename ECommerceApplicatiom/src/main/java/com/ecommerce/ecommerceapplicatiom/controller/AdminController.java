@@ -43,6 +43,11 @@ public class AdminController {
 	@Autowired
 	OrderDetailRepository orderDetailRepository;
 	
+	@GetMapping("/")
+	public String main() {
+		return "redirect:/admin/dashboard";
+	}
+	
 	@GetMapping("/dashboard")
 	public String dashboard(Model model) {
 		List<Product> products = productRepository.findAll();
