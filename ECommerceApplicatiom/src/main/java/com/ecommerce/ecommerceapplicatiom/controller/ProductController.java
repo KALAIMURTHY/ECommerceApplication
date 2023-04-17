@@ -109,7 +109,10 @@ public class ProductController {
 		}
 		model.addAttribute("total", total);
 		model.addAttribute("items", items);
-		return "shoppingcart";
+		if(cart.isEmpty())
+			return "redirect:/home";
+		else
+			return "shoppingcart";
 	}
 	
 	@PostMapping(value="/placeOrder",consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
@@ -148,5 +151,16 @@ public class ProductController {
 	public String deleteProductById(@PathVariable String id) {
 		productRepository.deleteProductByProductId(id);
 		return "success";
+	}
+	
+	@GetMapping("/removefromshoppingcart/{id}")
+	public String removefromshoppingcart(@PathVariable String id, Optional<Product> product, HttpSession session) {
+		product = productRepository.findProductByProductId(id);
+		Cart cart = cartManager.getCart(session);
+        cart.removeItem(product.get());
+		if(cart.isEmpty())
+			return "redirect:/home";
+		else
+			return "redirect:/shoppingcart";
 	}
 }

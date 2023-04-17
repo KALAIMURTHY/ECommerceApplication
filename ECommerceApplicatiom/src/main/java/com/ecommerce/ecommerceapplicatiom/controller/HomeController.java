@@ -19,7 +19,8 @@ public class HomeController {
 	ProductRepository productRepository;
 
 	@GetMapping("/")
-	public String home(Model model) {
+	public String home(Model model, HttpSession session) {
+		session.invalidate();
 		List<Product> products = productRepository.findAll();
 		model.addAttribute("products",products);
 		return "home";
